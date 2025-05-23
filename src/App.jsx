@@ -10,6 +10,12 @@ const App = () => {
         token: {
           fontFamily: "Lexend",
         },
+        components: {
+          Button: {
+            defaultHoverBorderColor: "rgba(0, 188, 125, 1)",
+            defaultHoverColor: "rgba(0, 188, 125, 1)",
+          },
+        },
       }}
     >
       <RouterProvider

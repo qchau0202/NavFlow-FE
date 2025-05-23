@@ -3,11 +3,11 @@ import Header from "../common/Header";
 
 const AppLayout = () => {
   return (
-    <div className="relative h-screen w-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Header />
-      <main>
+      <div className="flex-1 overflow-y-auto">
         <Outlet />
-      </main>
+      </div>
     </div>
   );
 };

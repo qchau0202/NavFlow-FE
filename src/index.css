@@ -1,7 +1,79 @@
 @import "tailwindcss";
-html,body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Lexend", sans-serif;
+
+/* Base styles */
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
+  font-family: "Lexend", sans-serif;
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+  .sm\:container {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .\2xl\:container {
+    max-width: 1536px;
+  }
+}
+
+/* Responsive utility classes */
+.responsive-text {
+  font-size: 1rem; /* Base size */
+}
+
+@media (min-width: 640px) {
+  .responsive-text {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-text {
+    font-size: 1.25rem;
+  }
+}
+
+/* Responsive spacing */
+.responsive-padding {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-padding {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-padding {
+    padding: 2rem;
+  }
 }

@@ -1,9 +1,9 @@
 const API_URL = import.meta.env.VITE_API_URL;
-
+console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
 export const trafficService = {
   // Get real-time detection image
   getDetectionImage: async (cameraId) => {
-    const response = await fetch(`${API_URL}/traffic/detect/${cameraId}`);
+    const response = await fetch(`${API_URL}/api/v1/traffic/detect/${cameraId}`);
     if (!response.ok) {
       throw new Error("Failed to fetch detection image");
     }
@@ -17,7 +17,7 @@ export const trafficService = {
 
   // Get traffic statistics
   getTrafficStats: async (cameraId) => {
-    const response = await fetch(`${API_URL}/traffic/stats/${cameraId}`);
+    const response = await fetch(`${API_URL}/api/v1/traffic/stats/${cameraId}`);
     if (!response.ok) {
       throw new Error("Failed to fetch traffic stats");
     }
@@ -26,7 +26,7 @@ export const trafficService = {
 
   // Get list of cameras
   getCameras: async () => {
-    const response = await fetch(`${API_URL}/cameras`);
+    const response = await fetch(`${API_URL}/api/v1/cameras`);
     if (!response.ok) {
       throw new Error("Failed to fetch cameras");
     }

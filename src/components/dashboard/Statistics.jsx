@@ -17,7 +17,7 @@ const Statistics = ({ data }) => {
   }, {});
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-4 max-h-full overflow-y-auto">
+    <div className="bg-white rounded-xl shadow-sm p-4 overflow-y-auto">
       <h3 className="text-lg font-semibold mb-4">Traffic Statistics</h3>
       <div className="space-y-4">
         {/* Info Cards Row */}

@@ -9,12 +9,12 @@ const CameraList = ({
   startDetection,
   stopDetection,
 }) => (
-  <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col h-full max-h-[800px]">
+  <div className="h-full max-h-full bg-white rounded-xl shadow-sm p-4 overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
     <div className="flex justify-between items-center mb-4">
       <h2 className="text-xl font-semibold">Cameras</h2>
       <span className="text-sm text-gray-500">{cameras.length} cameras</span>
     </div>
-    <div className="space-y-3 overflow-y-auto flex-1 pr-2">
+    <div className="space-y-3 flex-1">
       {cameras.map((cameraId) => (
         <div
           key={cameraId}
