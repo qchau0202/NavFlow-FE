@@ -12,13 +12,14 @@ export const useCameraDetection = () => {
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [isImageLoading, setIsImageLoading] = useState(false);
+  const [statsError, setStatsError] = useState(null);
   const intervalsRef = useRef({});
 
   // Fetch cameras on mount
   useEffect(() => {
     const fetchCameras = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/cameras/`);
+        const response = await axios.get(`${API_BASE_URL}/traffic/cameras`);
         setCameras(response.data);
       } catch (error) {
         console.error("Error fetching cameras:", error);
@@ -29,7 +30,7 @@ export const useCameraDetection = () => {
 
   const stopDetection = useCallback(async (cameraId) => {
     try {
-      await axios.post(`${API_BASE_URL}/traffic/stop/${cameraId}`);
+      await axios.post(`${API_BASE_URL}/traffic/detection/stop/${cameraId}`);
       setActiveDetections((prev) => {
         const newState = { ...prev };
         delete newState[cameraId];
@@ -46,8 +47,10 @@ export const useCameraDetection = () => {
         delete newResults[cameraId];
         return newResults;
       });
+      setStatsError(null);
     } catch (error) {
       console.error("Error stopping detection:", error);
+      setStatsError("Failed to stop detection");
     }
   }, []);
 
@@ -65,13 +68,13 @@ export const useCameraDetection = () => {
     try {
       setIsImageLoading(true);
       const response = await fetch(
-        `${API_BASE_URL}/traffic/stream/${selectedCamera}?t=${Date.now()}`
+        `${API_BASE_URL}/traffic/detection/stream/${selectedCamera}?t=${Date.now()}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch image");
       }
       setImageUrl(
-        `${API_BASE_URL}/traffic/stream/${selectedCamera}?t=${Date.now()}`
+        `${API_BASE_URL}/traffic/detection/stream/${selectedCamera}?t=${Date.now()}`
       );
     } catch (error) {
       console.error("Error fetching image:", error);
@@ -105,8 +108,9 @@ export const useCameraDetection = () => {
         await stopDetection(currentCamera);
       }
 
-      await axios.post(`${API_BASE_URL}/traffic/start/${cameraId}`);
+      await axios.post(`${API_BASE_URL}/traffic/detection/start/${cameraId}`);
       setActiveDetections({ [cameraId]: true });
+      setStatsError(null);
 
       // Clear any existing intervals
       if (intervalsRef.current[cameraId]) {
@@ -117,18 +121,36 @@ export const useCameraDetection = () => {
       intervalsRef.current[cameraId] = setInterval(async () => {
         try {
           const response = await axios.get(
-            `${API_BASE_URL}/traffic/stats/${cameraId}`
+            `${API_BASE_URL}/traffic/detection/stats/${cameraId}`
           );
+          const stats = response.data;
+
+          // Process and enhance the stats data
+          const processedStats = {
+            ...stats,
+            timestamp: new Date().toISOString(),
+            vehicle_types: stats.detections.reduce((acc, det) => {
+              acc[det.label] = (acc[det.label] || 0) + 1;
+              return acc;
+            }, {}),
+            average_confidence:
+              stats.detections.reduce((acc, det) => acc + det.confidence, 0) /
+              (stats.detections.length || 1),
+          };
+
           setDetectionResults((prev) => ({
             ...prev,
-            [cameraId]: response.data,
+            [cameraId]: processedStats,
           }));
+          setStatsError(null);
         } catch (error) {
           console.error("Error fetching results:", error);
+          setStatsError("Failed to fetch traffic statistics");
         }
       }, STATS_UPDATE_INTERVAL);
     } catch (error) {
       console.error("Error starting detection:", error);
+      setStatsError("Failed to start detection");
     }
   };
 
@@ -151,5 +173,6 @@ export const useCameraDetection = () => {
     startDetection,
     stopDetection,
     updateImage,
+    statsError,
   };
 };

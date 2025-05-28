@@ -2,21 +2,11 @@ import { RouterProvider } from "react-router-dom";
 import router from "./routes";
 import { ConfigProvider } from "antd";
 import { Toaster } from "react-hot-toast";
-
+import antdTheme from "./contexts/ThemeContext";
 const App = () => {
   return (
     <ConfigProvider
-      theme={{
-        token: {
-          fontFamily: "Lexend",
-        },
-        components: {
-          Button: {
-            defaultHoverBorderColor: "rgba(0, 188, 125, 1)",
-            defaultHoverColor: "rgba(0, 188, 125, 1)",
-          },
-        },
-      }}
+      theme={antdTheme}
     >
       <RouterProvider
         router={router}
@@ -28,25 +18,6 @@ const App = () => {
       />
       <Toaster
         position="top-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-          success: {
-            duration: 2000,
-            theme: {
-              primary: "#4aed88",
-            },
-          },
-          error: {
-            duration: 2000,
-            theme: {
-              primary: "#ff4b4b",
-            },
-          },
-        }}
       />
     </ConfigProvider>
   );

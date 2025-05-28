@@ -26,7 +26,7 @@ export const trafficService = {
 
   // Get list of cameras
   getCameras: async () => {
-    const response = await fetch(`${API_URL}/api/v1/cameras`);
+    const response = await fetch(`${API_URL}/api/v1/traffic/cameras`);
     if (!response.ok) {
       throw new Error("Failed to fetch cameras");
     }

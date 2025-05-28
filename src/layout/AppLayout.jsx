@@ -3,11 +3,9 @@ import Header from "../components/common/Header";
 
 const AppLayout = () => {
   return (
-    <div className="grid grid-rows-12 h-screen [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-      <div className="row-span-1">
-        <Header />
-      </div>
-      <div className="row-span-11">
+    <div className="h-screen flex flex-col ">
+      <Header />
+      <div className="flex-1 overflow-y-auto">
         <Outlet />
       </div>
     </div>

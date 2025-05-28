@@ -25,7 +25,7 @@ const Hero = () => {
       </div>
       <div className="flex items-center justify-center overflow-hidden w-1/2">
         <img
-          src="/Directions-bro.png"
+          src="/bg_landing_hero.png"
           alt="Navigation illustration"
           className="h-[80%] w-[80%] object-contain"
         />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const LiveImage = ({
   imageUrl,
@@ -10,19 +10,31 @@ const LiveImage = ({
   startDetection,
 }) => {
   const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   const handleImageLoad = () => {
     onLoadingChange(false);
     setError(false);
+    setRetryCount(0);
   };
 
   const handleImageError = () => {
     onLoadingChange(false);
     setError(true);
+    // Retry loading the image after a short delay
+    setTimeout(() => {
+      setRetryCount((prev) => prev + 1);
+    }, 1000);
   };
 
+  // Reset error state when camera changes
+  useEffect(() => {
+    setError(false);
+    setRetryCount(0);
+  }, [selectedCamera]);
+
   return (
-    <div className="bg-white rounded-xl shadow-sm p-4">
+    <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">
           Camera: <span className="text-green-500">{selectedCamera}</span>
@@ -46,30 +58,36 @@ const LiveImage = ({
           </button>
         </div>
       </div>
-      <div className="relative w-full overflow-hidden">
+      <div className="flex-1 relative overflow-hidden bg-gray-100 rounded-lg">
         {imageUrl && !error ? (
           <img
-            src={imageUrl}
+            key={`${imageUrl}-${retryCount}`}
+            src={`${imageUrl}&t=${Date.now()}`}
             alt="Live Detection"
             className="object-contain w-full h-full"
             onLoad={handleImageLoad}
             onError={handleImageError}
           />
         ) : (
-          <img
-            src="https://placehold.co/600x300"
-            alt="No image available"
-            className="object-contain w-full h-full opacity-60"
-          />
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-gray-500 mb-2">
+                {error ? "Failed to load image" : "No image available"}
+              </p>
+              {error && (
+                <button
+                  onClick={() => setRetryCount((prev) => prev + 1)}
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  Retry
+                </button>
+              )}
+            </div>
+          </div>
         )}
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
-          </div>
-        )}
-        {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-            <p className="text-red-500">Failed to load image</p>
           </div>
         )}
       </div>

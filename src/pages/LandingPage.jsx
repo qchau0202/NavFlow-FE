@@ -1,6 +1,6 @@
-import Features from "../components/common/Features";
-import Hero from "../components/common/Hero";
-import Team from "../components/common/Team";
+import Features from "../components/section/Features";
+import Hero from "../components/section/Hero";
+import Team from "../components/section/Team";
 
 const LandingPage = () => {
   return (
