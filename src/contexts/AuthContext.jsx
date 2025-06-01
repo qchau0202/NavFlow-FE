@@ -7,6 +7,9 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loading, setLoading] = useState(true);
+  const [isGuest, setIsGuest] = useState(
+    localStorage.getItem("isGuest") === "true"
+  );
 
   // Restore session on mount
   useEffect(() => {
@@ -17,6 +20,7 @@ const AuthProvider = ({ children }) => {
           console.log("Restore session response:", response.data);
           if (response.data.success) {
             setUser(response.data.data);
+            setIsGuest(false);
           } else {
             console.log("Session restore failed:", response.data.message);
             logout();
@@ -28,6 +32,13 @@ const AuthProvider = ({ children }) => {
           );
           logout();
         }
+      } else if (isGuest) {
+        // Restore guest session
+        setUser({
+          id: "guest",
+          username: "Guest User",
+          role: "guest",
+        });
       }
       setLoading(false);
     };
@@ -37,14 +48,31 @@ const AuthProvider = ({ children }) => {
   const login = (userData, authToken) => {
     setUser(userData);
     setToken(authToken);
+    setIsGuest(false);
     localStorage.setItem("token", authToken);
+    localStorage.removeItem("isGuest");
     console.log("Login:", { user: userData, token: authToken });
+  };
+
+  const loginAsGuest = () => {
+    setUser({
+      id: "guest",
+      username: "Guest User",
+      role: "guest",
+    });
+    setToken(null);
+    setIsGuest(true);
+    localStorage.removeItem("token");
+    localStorage.setItem("isGuest", "true");
+    console.log("Logged in as guest");
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
+    setIsGuest(false);
     localStorage.removeItem("token");
+    localStorage.removeItem("isGuest");
     console.log("Logged out");
   };
 
@@ -55,7 +83,16 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, updateUser, loading }}
+      value={{
+        user,
+        token,
+        login,
+        logout,
+        updateUser,
+        loading,
+        isGuest,
+        loginAsGuest,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -1,29 +1,15 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown } from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { getCurrentUser } from "../../services/api";
-import { useEffect, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await getCurrentUser();
-        setUser(response.data);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-    fetchUser();
-  }, []);
-
+  const { user, logout, isGuest } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    logout();
     navigate("/login");
   };
 
@@ -66,10 +52,39 @@ const Header = () => {
     },
   ];
 
+  const renderUserSection = () => {
+    if (!user) {
+      return (
+        <Link
+          to="/login"
+          className="text-emerald-500 hover:text-emerald-600 font-medium"
+        >
+          Login
+        </Link>
+      );
+    }
+
+    return (
+      <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
+        <div className="flex items-center gap-2 cursor-pointer">
+          <p className="text-gray-700">
+            {isGuest ? "Guest User" : user.username}
+          </p>
+          <Avatar
+            size={40}
+            className={isGuest ? "bg-gray-400" : "bg-emerald-500"}
+          >
+            <UserOutlined />
+          </Avatar>
+        </div>
+      </Dropdown>
+    );
+  };
+
   return (
     <div className="bg-white border-b border-gray-200">
       <div className="grid grid-cols-3 p-4">
-        <div className="col-span-1 text-lg md:text-2xl sm:text-lg font-medium text-gray-800 px-6">
+        <div className="col-span-1 text-lg md:text-2xl sm:text-lg font-bold text-emerald-600 px-6">
           <Link to="/">NavFlow</Link>
         </div>
         <div className="col-span-1">
@@ -91,14 +106,7 @@ const Header = () => {
           </ul>
         </div>
         <div className="col-span-1 flex items-center justify-end gap-4 px-6">
-          <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
-            <div className="flex items-center gap-2 cursor-pointer">
-              <p>{user?.name}</p>
-              <Avatar size={40}>
-                <UserOutlined />
-              </Avatar>
-            </div>
-          </Dropdown>
+          {renderUserSection()}
         </div>
       </div>
     </div>

@@ -47,13 +47,11 @@ const Dashboard = () => {
               />
             </div>
           </div>
-          <div className="col-span-4 md:col-span-4 sm:col-span-1 h-full">
-            <div className="h-full bg-white rounded-lg shadow-lg p-4 border border-gray-200 flex flex-col">
-              <Statistics
-                data={detectionResults[selectedCamera]}
-                error={statsError}
-              />
-            </div>
+          <div className="col-span-4 md:col-span-4 sm:col-span-1 h-full overflow-y-auto bg-white rounded-lg shadow-lg p-4 border border-gray-200 flex flex-col">
+            <Statistics
+              data={detectionResults[selectedCamera]}
+              error={statsError}
+            />
           </div>
         </>
       ) : (

@@ -1,7 +1,12 @@
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: `${API_URL}/api/v1`,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 api.interceptors.request.use((config) => {
@@ -25,9 +30,11 @@ api.interceptors.response.use(
 );
 
 // Auth APIs
-export const login = (data) => api.post("api/v1/auth/login", data);
-export const register = (data) => api.post("api/v1/auth/register", data);
-export const getCurrentUser = () => api.get("api/v1/auth/current");
+export const login = (data) => api.post("auth/login", data);
+export const register = (data) => api.post("auth/register", data);
+export const getCurrentUser = () => api.get("auth/current");
 
 // Traffic APIs
 export { trafficService } from "./trafficService";
+
+export default api;

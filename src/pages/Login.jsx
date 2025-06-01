@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button, Checkbox, Divider } from "antd";
 import { login } from "../services/api";
 import { toast } from "react-hot-toast";
+import { useAuth } from "../contexts/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { loginAsGuest } = useAuth();
 
   const onFinish = async (values) => {
     try {
@@ -15,6 +17,12 @@ const Login = () => {
     } catch (err) {
       toast.error(err.message || "Login failed");
     }
+  };
+
+  const handleGuestLogin = () => {
+    loginAsGuest();
+    toast.success("Logged in as guest!");
+    navigate("/");
   };
 
   return (
@@ -103,6 +111,18 @@ const Login = () => {
               </Button>
             </Form.Item>
           </Form>
+
+          <Divider className="my-6">or</Divider>
+
+          <Button
+            type="default"
+            size="large"
+            className="w-full font-semibold rounded-md"
+            style={{ borderRadius: 8 }}
+            onClick={handleGuestLogin}
+          >
+            Continue as Guest
+          </Button>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600">

@@ -1,35 +1,70 @@
-const API_URL = import.meta.env.VITE_API_URL;
-console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
+import api from "./api";
+
 export const trafficService = {
   // Get real-time detection image
   getDetectionImage: async (cameraId) => {
-    const response = await fetch(`${API_URL}/api/v1/traffic/detect/${cameraId}`);
+    const response = await api.get(`/traffic/detection/stream/${cameraId}`, {
+      responseType: "blob",
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch detection image");
     }
-    const blob = await response.blob();
-    const results = response.headers.get("X-Detection-Results");
+    const blob = response.data;
     return {
       imageUrl: URL.createObjectURL(blob),
-      results: results ? JSON.parse(results) : null,
+      results: response.headers.get("X-Detection-Results")
+        ? JSON.parse(response.headers.get("X-Detection-Results"))
+        : null,
     };
   },
 
   // Get traffic statistics
   getTrafficStats: async (cameraId) => {
-    const response = await fetch(`${API_URL}/api/v1/traffic/stats/${cameraId}`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch traffic stats");
+    try {
+      console.log("TrafficService: Fetching stats for camera", cameraId);
+      const response = await api.get(`/traffic/detection/stats/${cameraId}`);
+      console.log("TrafficService: Raw API response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("TrafficService: Error fetching traffic stats:", error);
+      return null;
     }
-    return await response.json();
   },
 
   // Get list of cameras
   getCameras: async () => {
-    const response = await fetch(`${API_URL}/api/v1/traffic/cameras`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch cameras");
+    try {
+      console.log("TrafficService: Fetching cameras");
+      const response = await api.get("/traffic/cameras");
+      console.log("TrafficService: Cameras response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("TrafficService: Error fetching cameras:", error);
+      return [];
     }
-    return await response.json();
+  },
+
+  startDetection: async (cameraId) => {
+    try {
+      console.log("TrafficService: Starting detection for camera", cameraId);
+      const response = await api.post(`/traffic/detection/start/${cameraId}`);
+      console.log("TrafficService: Start detection response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("TrafficService: Error starting detection:", error);
+      return null;
+    }
+  },
+
+  stopDetection: async (cameraId) => {
+    try {
+      console.log("TrafficService: Stopping detection for camera", cameraId);
+      const response = await api.post(`/traffic/detection/stop/${cameraId}`);
+      console.log("TrafficService: Stop detection response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("TrafficService: Error stopping detection:", error);
+      return null;
+    }
   },
 };

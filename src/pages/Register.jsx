@@ -32,10 +32,10 @@ const Register = () => {
           />
           <div>
             <h1 className="text-4xl font-bold text-center text-white">
-              Join SmartRide Today!
+              Join NavFlow Today!
             </h1>
             <p className="text-center text-white">
-              Create your account and start booking rides with SmartRide.
+              Create your account and start personalizing your routes.
             </p>
           </div>
         </div>

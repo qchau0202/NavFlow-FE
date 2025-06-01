@@ -6,6 +6,7 @@ import LandingPage from "../pages/LandingPage";
 import Profile from "../pages/Profile";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import { useAuth } from "../contexts/AuthContext";
 const router = createBrowserRouter([
   {
     path: "/",
