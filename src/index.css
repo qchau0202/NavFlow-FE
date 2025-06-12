@@ -9,6 +9,10 @@ html {
   font-family: "Lexend", sans-serif;
 }
 
+.leaflet-popup-content,
+.leaflet-popup-content-wrapper {
+  font-family: "Lexend", sans-serif !important;
+}
 /* Responsive */
 @media (min-width: 640px) {
   .sm\:container {

@@ -18,11 +18,10 @@ const AuthProvider = ({ children }) => {
         try {
           const response = await getCurrentUser();
           console.log("Restore session response:", response.data);
-          if (response.data.success) {
-            setUser(response.data.data);
+          if (response.data && (response.data._id || response.data.email)) {
+            setUser(response.data);
             setIsGuest(false);
           } else {
-            console.log("Session restore failed:", response.data.message);
             logout();
           }
         } catch (error) {

@@ -1,23 +1,23 @@
-import { useEffect } from "react";
 import Map from "../components/common/Map";
 import { useAllCamerasDetection } from "../hooks/useAllCamerasDetection";
 
 const Playground = () => {
-  const { startAllDetections, stopAllDetections } = useAllCamerasDetection();
-
-  // Start detections when component mounts
-  useEffect(() => {
-    startAllDetections();
-
-    // Stop detections when component unmounts
-    return () => {
-      stopAllDetections();
-    };
-  }, [startAllDetections, stopAllDetections]);
+  const {
+    cameras,
+    detectionResults,
+    isLoading,
+    error,
+    // isDetecting, // you can use this if you want to show a loading indicator
+  } = useAllCamerasDetection();
 
   return (
     <div className="h-full">
-      <Map />
+      <Map
+        cameras={cameras}
+        detectionResults={detectionResults}
+        isLoading={isLoading}
+        error={error}
+      />
     </div>
   );
 };

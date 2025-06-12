@@ -18,6 +18,9 @@ const Hero = () => {
         <div>
           <Button
             size="large"
+            onClick={() => {
+              window.location.href = "/playground";
+            }}
           >
             Get started
           </Button>

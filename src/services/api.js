@@ -9,6 +9,20 @@ const api = axios.create({
   },
 });
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -19,13 +33,45 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    const errorMsg =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      "An error occurred, please try again.";
-    console.error("API error:", errorMsg);
-    return Promise.reject(new Error(errorMsg));
+  async (error) => {
+    const originalRequest = error.config;
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      if (isRefreshing) {
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers["Authorization"] = "Bearer " + token;
+            return api(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+      originalRequest._retry = true;
+      isRefreshing = true;
+      try {
+        const res = await api.post("/auth/refresh");
+        const newToken = res.data.access_token;
+        localStorage.setItem("token", newToken);
+        api.defaults.headers.common["Authorization"] = "Bearer " + newToken;
+        processQueue(null, newToken);
+        originalRequest.headers["Authorization"] = "Bearer " + newToken;
+        return api(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+    return Promise.reject(error);
   }
 );
 
@@ -33,8 +79,5 @@ api.interceptors.response.use(
 export const login = (data) => api.post("auth/login", data);
 export const register = (data) => api.post("auth/register", data);
 export const getCurrentUser = () => api.get("auth/current");
-
-// Traffic APIs
-export { trafficService } from "./trafficService";
 
 export default api;

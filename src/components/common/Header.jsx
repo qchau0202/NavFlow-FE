@@ -64,17 +64,31 @@ const Header = () => {
       );
     }
 
+    // Show username and a mock-avatar (first letter, capitalized)
+    const displayName = isGuest ? "Guest User" : user.name;
+    const avatarBg = isGuest ? "bg-gray-400" : "bg-emerald-500";
+    const avatarText = isGuest ? (
+      <UserOutlined />
+    ) : (
+      <span className="text-white font-bold text-lg">
+        {user.name?.charAt(0).toUpperCase()}
+      </span>
+    );
+
     return (
       <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
         <div className="flex items-center gap-2 cursor-pointer">
-          <p className="text-gray-700">
-            {isGuest ? "Guest User" : user.username}
-          </p>
+          <p className="text-gray-700 font-semibold">{displayName}</p>
           <Avatar
             size={40}
-            className={isGuest ? "bg-gray-400" : "bg-emerald-500"}
+            className={avatarBg}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <UserOutlined />
+            {avatarText}
           </Avatar>
         </div>
       </Dropdown>
